@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlazorApp1.Models.Fixtures
 {
@@ -16,7 +17,7 @@ namespace BlazorApp1.Models.Fixtures
         public int Results { get; set; }
 
         [JsonProperty(PropertyName = "fixtures")]
-        public List<Fixture>? Fixtures { get; }
+        public List<Fixture>? Fixtures { get; set; }
     }
 
     public class Fixture
@@ -62,9 +63,11 @@ namespace BlazorApp1.Models.Fixtures
 
         [JsonProperty(PropertyName = "homeTeam")]
         public Hometeam? HomeTeam { get; set; }
+        [JsonIgnore]
+        public int HomeTeamId { get; set; }
 
         [JsonProperty(PropertyName = "awayTeam")]
-        public Awayteam? AwayTeam { get; set; }
+        public Awayteam? Awayteam { get; set; }
 
         [JsonProperty(PropertyName = "goalsHomeTeam")]
         public int? GoalsHomeTeam { get; set; }
@@ -80,7 +83,6 @@ namespace BlazorApp1.Models.Fixtures
     {
         [JsonIgnore]
         public int LeagueId { get; set; }
-
         [JsonProperty(PropertyName = "name")]
         public string? Name { get; set; }
 
@@ -96,9 +98,8 @@ namespace BlazorApp1.Models.Fixtures
 
     public class Hometeam
     {
-        [JsonIgnore]
-        public int HomeTeamId { get; set; }
         [JsonProperty(PropertyName = "team_id")]
+        [Key]
         public int TeamId { get; set; }
 
         [JsonProperty(PropertyName = "team_name")]
@@ -110,9 +111,8 @@ namespace BlazorApp1.Models.Fixtures
 
     public class Awayteam
     {
-        [JsonIgnore]
-        public int AwayTeamId { get; set; }
         [JsonProperty(PropertyName = "team_id")]
+        [Key]
         public int TeamId { get; set; }
 
         [JsonProperty(PropertyName = "team_name")]
@@ -125,6 +125,7 @@ namespace BlazorApp1.Models.Fixtures
     public class Score
     {
         [JsonIgnore]
+        [Key]
         public int ScoreId { get; set; }
         [JsonProperty(PropertyName = "halftime")]
         public string? Halftime { get; set; }

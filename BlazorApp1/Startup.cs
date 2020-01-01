@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BlazorApp1.Data;
+using BlazorApp1.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.Update.Internal;
 
 namespace BlazorApp1
 {
@@ -24,8 +26,13 @@ namespace BlazorApp1
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<WeatherForecastService>();
-            services.AddDbContext<UltronContext>(options => options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=UltronDb;Trusted_Connection=True;ConnectRetryCount=0"));
+            services.AddDbContext<UltronContext>(options =>
+            {
+                options.UseSqlServer(
+                        @"Data Source=(localdb)\mssqllocaldb;Initial Catalog=UltronDb;Integrated Security=True;Pooling=False");
+                options.ReplaceService<ISqlServerUpdateSqlGenerator, SqlServerUpdateSqlGeneratorInsertIdentity>();
 
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +44,7 @@ namespace BlazorApp1
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler(" / Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
