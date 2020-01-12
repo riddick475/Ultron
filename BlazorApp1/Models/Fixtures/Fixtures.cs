@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlazorApp1.Models.Fixtures
 {
-    public class Rootobject
+    public class Fixtures
     {
         [JsonProperty(PropertyName = "api")]
         public Api? Api { get; set; }
