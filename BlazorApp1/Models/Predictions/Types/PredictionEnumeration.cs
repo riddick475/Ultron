@@ -19,7 +19,7 @@ namespace BlazorApp1.Models.Predictions.Types
 
         public int CompareTo(object? obj)
         {
-            throw new NotImplementedException();
+            return Id.CompareTo((obj as PredictionEnumeration).Id);
         }
 
         public override string ToString()
@@ -43,6 +43,16 @@ namespace BlazorApp1.Models.Predictions.Types
             var valueMatches = Id.Equals(otherValue.Id);
 
             return typeMatches && valueMatches;
+        }
+
+        protected bool Equals(PredictionEnumeration other)
+        {
+            return Name == other.Name && Id == other.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Id);
         }
     }
 }
