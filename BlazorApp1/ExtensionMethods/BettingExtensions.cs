@@ -9,7 +9,8 @@ namespace BlazorApp1.ExtensionMethods
             "1" => 1,
             "2" => 2,
             "x" => 0,
-            "X" => 0
+            "X" => 0,
+            _ => -1
         };
     }
 

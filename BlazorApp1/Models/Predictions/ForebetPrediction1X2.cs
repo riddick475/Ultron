@@ -18,7 +18,7 @@ namespace BlazorApp1.Models.Predictions
         public int Temperature { get; set; }
         public double Odds { get; set; }
 
-        public string CurrentMinute { get; set; }
-        public string CurrentResult { get; set; }
+        public string? CurrentMinute { get; set; }
+        public string? CurrentResult { get; set; }
     }
 }
