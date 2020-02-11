@@ -72,12 +72,14 @@ namespace BlazorApp1.Data
                     forebetPredictions.Add(forebetPrediction);
                 }
 
-                var requestYesterday = new RestRequest(new Uri("https://www.forebet.com/en/football-predictions-from-yesterday"), Method.GET);
-                var responseYesterday = client.Execute(requestYesterday);
+
+                var clientYesterday = new RestClient("https://www.forebet.com/en/football-predictions-from-yesterday");
+                var requestYesterday = new RestRequest(Method.GET);
+                var responseYesterday = clientYesterday.Execute(requestYesterday);
                 var docYesterday = new HtmlDocument();
                 docYesterday.LoadHtml(responseYesterday.Content);
 
-                var yesterdayForebetPredictions = doc.DocumentNode.SelectSingleNode("//table[@class='schema tblen']")
+                var yesterdayForebetPredictions = docYesterday.DocumentNode.SelectSingleNode("//table[@class='schema tblen']")
                                                  .Descendants("tr")
                                                  .Skip(2)
                                                  .Where(tr => tr.Elements("td").Count() > 1)
@@ -107,8 +109,8 @@ namespace BlazorApp1.Data
                     forebetPrediction.Prediction = todayForebetPrediction[4].GetWinDrawWin();
                     forebetPrediction.CorrectScore = todayForebetPrediction[5];
                     forebetPrediction.Odds = double.Parse(todayForebetPrediction[6], CultureInfo.InvariantCulture);
-                    forebetPrediction.CurrentMinute = todayForebetPrediction[7];
-                    forebetPrediction.CurrentResult = todayForebetPrediction[8];
+                    forebetPrediction.CurrentMinute = todayForebetPrediction[10];
+                    forebetPrediction.FinalScore = todayForebetPrediction[11];
                     forebetPredictionsYesterday.Add(forebetPrediction);
                 }
 
