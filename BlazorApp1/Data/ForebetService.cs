@@ -9,6 +9,7 @@ namespace BlazorApp1.Data
     using Models.Predictions;
     using HtmlAgilityPack;
     using RestSharp;
+
     public class WeatherForecastService
     {
         private static readonly string[] Summaries =
@@ -42,7 +43,7 @@ namespace BlazorApp1.Data
                                                  .Skip(2)
                                                  .Where(tr => tr.Elements("td").Count() > 1)
                                                  .Select(tr =>
-                                                     tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
+                                                     tr.Elements("td").Select(td => td.InnerText.Trim() + "\n" + FindTextBetween(td.OuterHtml, "<a class=\"tnmscn\" itemprop=\"url\" href=\"", "\">")).ToList())
                                                  .ToList();
 
                 var forebetPredictions = new List<ForebetPrediction1X2>();
@@ -61,6 +62,7 @@ namespace BlazorApp1.Data
                     forebetPrediction.LeagueCode = dataArraySplit.First();
                     forebetPrediction.HomeTeam = dataArraySplit[3];
                     forebetPrediction.AwayTeam = dataArraySplit[4];
+                    forebetPrediction.Head2HeadUrl = "https://www.forebet.com" + dataArraySplit[7];
                     forebetPrediction.HomeWinProbability = int.Parse(todayForebetPrediction[1], CultureInfo.InvariantCulture);
                     forebetPrediction.DrawProbability = int.Parse(todayForebetPrediction[2], CultureInfo.InvariantCulture);
                     forebetPrediction.AwayTeamProbability = int.Parse(todayForebetPrediction[3], CultureInfo.InvariantCulture);
@@ -84,15 +86,15 @@ namespace BlazorApp1.Data
                                                  .Skip(2)
                                                  .Where(tr => tr.Elements("td").Count() > 1)
                                                  .Select(tr =>
-                                                     tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
+                                                     tr.Elements("td").Select(td => td.InnerText.Trim() + "\n" + FindTextBetween(td.OuterHtml, "<a class=\"tnmscn\" itemprop=\"url\" href=\"", "\">")).ToList())
                                                  .ToList();
 
                 var forebetPredictionsYesterday = new List<ForebetPrediction1X2>();
 
-                foreach (var todayForebetPrediction in yesterdayForebetPredictions)
+                foreach (var yesterdayPrediction in yesterdayForebetPredictions)
                 {
                     // Remove tabs and whitespaces
-                    var firstRowData = todayForebetPrediction.First()
+                    var firstRowData = yesterdayPrediction.First()
                                                              .Replace("\t", string.Empty,
                                                                  StringComparison.OrdinalIgnoreCase);
                     firstRowData = firstRowData.Replace(" ", string.Empty, StringComparison.OrdinalIgnoreCase);
@@ -103,14 +105,15 @@ namespace BlazorApp1.Data
                     forebetPrediction.LeagueCode = dataArraySplit.First();
                     forebetPrediction.HomeTeam = dataArraySplit[3];
                     forebetPrediction.AwayTeam = dataArraySplit[4];
-                    forebetPrediction.HomeWinProbability = int.Parse(todayForebetPrediction[1], CultureInfo.InvariantCulture);
-                    forebetPrediction.DrawProbability = int.Parse(todayForebetPrediction[2], CultureInfo.InvariantCulture);
-                    forebetPrediction.AwayTeamProbability = int.Parse(todayForebetPrediction[3], CultureInfo.InvariantCulture);
-                    forebetPrediction.Prediction = todayForebetPrediction[4].GetWinDrawWin();
-                    forebetPrediction.CorrectScore = todayForebetPrediction[5];
-                    forebetPrediction.Odds = double.Parse(todayForebetPrediction[6], CultureInfo.InvariantCulture);
-                    forebetPrediction.CurrentMinute = todayForebetPrediction[10];
-                    forebetPrediction.FinalScore = todayForebetPrediction[11];
+                    forebetPrediction.Head2HeadUrl = "https://www.forebet.com" + dataArraySplit[8];
+                    forebetPrediction.HomeWinProbability = int.Parse(yesterdayPrediction[1], CultureInfo.InvariantCulture);
+                    forebetPrediction.DrawProbability = int.Parse(yesterdayPrediction[2], CultureInfo.InvariantCulture);
+                    forebetPrediction.AwayTeamProbability = int.Parse(yesterdayPrediction[3], CultureInfo.InvariantCulture);
+                    forebetPrediction.Prediction = yesterdayPrediction[4].GetWinDrawWin();
+                    forebetPrediction.CorrectScore = yesterdayPrediction[5];
+                    forebetPrediction.Odds = double.Parse(yesterdayPrediction[6], CultureInfo.InvariantCulture);
+                    forebetPrediction.CurrentMinute = yesterdayPrediction[10];
+                    forebetPrediction.FinalScore = yesterdayPrediction[11];
                     forebetPredictionsYesterday.Add(forebetPrediction);
                 }
 
@@ -127,6 +130,22 @@ namespace BlazorApp1.Data
                 Console.WriteLine(e);
                 throw;
             }
+        }
+        public string FindTextBetween(string text, string left, string right)
+        {
+            // TODO: Validate input arguments
+
+            int beginIndex = text.IndexOf(left); // find occurence of left delimiter
+            if (beginIndex == -1)
+                return string.Empty; // or throw exception?
+
+            beginIndex += left.Length;
+
+            int endIndex = text.IndexOf(right, beginIndex); // find occurence of right delimiter
+            if (endIndex == -1)
+                return string.Empty; // or throw exception?
+
+            return text.Substring(beginIndex, endIndex - beginIndex).Trim();
         }
     }
 }

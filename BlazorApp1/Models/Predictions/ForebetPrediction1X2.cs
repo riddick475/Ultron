@@ -34,5 +34,7 @@
         public string? CurrentResult { get; set; }
 
         public string? FinalScore { get; set; }
+
+        public string? Head2HeadUrl { get; set; }
     }
 }
