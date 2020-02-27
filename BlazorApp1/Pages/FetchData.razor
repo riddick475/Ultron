@@ -1,46 +1,108 @@
 ﻿@page "/fetchdata"
-
 @using BlazorApp1.Data
+@using BlazorApp1.Models.Views
+@using BlazorTable
+@using System.ComponentModel
+@using BlazorApp1.Models.Predictions
 @inject WeatherForecastService ForecastService
 
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (forecasts == null)
+@if (predictions.TodayPredictions == null)
 {
-    <p><em>Loading...</em></p>
+    <p>
+        <em>Loading...</em>
+    </p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
 
+    <Table TableItem="ForebetPrediction1X2" Items="todayPredictions" PageSize="15" @ref="Table" ColumnReorder="true">
+        <Column TableItem="ForebetPrediction1X2" Title="Home Team" Field="@(x => x.HomeTeam)" Sortable="true" Filterable="true" Width="10%" DefaultSortColumn="true" />
+        <Column TableItem="ForebetPrediction1X2" Title="Away Team" Field="@(x => x.AwayTeam)" Sortable="true" Filterable="true" Width="20%" />
+        <LoadingDataTemplate>
+            <Template>
+                <div class="text-center">
+                    <h1>Custom Loading Template</h1>
+                </div>
+            </Template>
+        </LoadingDataTemplate>
+        <Pager ShowPageNumber="true" ShowTotalCount="true" />
+    </Table>
+    @*<table class="table">
+            <thead>
+                <tr>
+                    <th>Home Team</th>
+                    <th>Away Team</th>
+                    <th>Home Team Probability</th>
+                    <th>Away Team Probability</th>
+                    <th>Draw Probability></th>
+                    <th>Correct Score</th>
+                    <th>Current Result</th>
+                    <th>Average Goals></th>
+                    <th>Prediction</th>
+                    <th>Odds</th>
+                    <th>League Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var forecast in predictions.TodayPredictions)
+                {
+                    <tr>
+                        <td>@forecast.AwayTeam</td>
+                    </tr>
+                }
+            </tbody>
+        </table>*@
+}
+@*public double AverageGoals { get; set; }
+
+    public string AwayTeam { get; set; }
+
+    public int AwayTeamProbability { get; set; }
+
+    public string? CorrectScore { get; set; }
+
+    public string? CurrentMinute { get; set; }
+
+    public string? CurrentResult { get; set; }
+
+    public int DrawProbability { get; set; }
+
+    public string? FinalScore { get; set; }
+
+    public string? Head2HeadUrl { get; set; }
+
+    public string HomeTeam { get; set; }
+
+    public int HomeWinProbability { get; set; }
+
+    public string LeagueCode { get; set; }
+
+    public double Odds { get; set; }
+
+    public int Prediction { get; set; }
+
+    [Key]
+    public int PredictionId { get; set; }
+
+    public int Temperature { get; set; }*@
 @code {
-    WeatherForecast[] forecasts;
+
+    private ITable<ForebetPrediction1X2> Table;
+    ForebetPredictionsViewModel predictions = new ForebetPredictionsViewModel();
+    List<ForebetPrediction1X2> todayPredictions = new List<ForebetPrediction1X2>();
+    List<ForebetPrediction1X2> yesterdayPredictions = new List<ForebetPrediction1X2>();
+
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        predictions = await ForecastService.GetForecastAsync().ConfigureAwait(false);
+        todayPredictions = predictions.TodayPredictions;
+        yesterdayPredictions = predictions.YesterdayPredictions;
     }
+
+
 }

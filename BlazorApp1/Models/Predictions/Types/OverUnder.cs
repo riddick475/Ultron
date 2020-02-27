@@ -6,7 +6,8 @@
 
         public static readonly OverUnder Under2_5 = new OverUnder(2, "Under2_5");
 
-        protected OverUnder(int id, string name) : base(id, name)
+        protected OverUnder(int id, string name)
+            : base(id, name)
         {
         }
     }

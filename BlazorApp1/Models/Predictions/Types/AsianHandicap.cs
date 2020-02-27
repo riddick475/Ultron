@@ -6,7 +6,8 @@
 
         public static readonly AsianHandicap Plus1_5 = new AsianHandicap(2, "Plus1_5");
 
-        protected AsianHandicap(int id, string name) : base(id, name)
+        protected AsianHandicap(int id, string name)
+            : base(id, name)
         {
         }
     }

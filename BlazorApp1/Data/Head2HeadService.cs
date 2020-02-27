@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace BlazorApp1.Data
+﻿namespace BlazorApp1.Data
 {
     public class Head2HeadService
     {
@@ -10,7 +8,5 @@ namespace BlazorApp1.Data
         {
             this.context = context;
         }
-
-
     }
 }

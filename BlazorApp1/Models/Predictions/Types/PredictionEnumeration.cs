@@ -1,36 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-namespace BlazorApp1.Models.Predictions.Types
+﻿namespace BlazorApp1.Models.Predictions.Types
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
     public class PredictionEnumeration : IComparable
     {
         protected PredictionEnumeration(int id, string name)
         {
-            Id = id;
-            Name = name;
+            this.Id = id;
+            this.Name = name;
         }
-
-        public string Name { get; }
 
         public int Id { get; }
 
-        public int CompareTo(object? obj)
-        {
-            return Id.CompareTo((obj as PredictionEnumeration).Id);
-        }
+        public string Name { get; }
 
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        public static IEnumerable<T> GetAll<T>() where T : PredictionEnumeration
+        public static IEnumerable<T> GetAll<T>()
+            where T : PredictionEnumeration
         {
             var fields = typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
             return fields.Select(f => f.GetValue(null)).Cast<T>();
+        }
+
+        public int CompareTo(object? obj)
+        {
+            return this.Id.CompareTo((obj as PredictionEnumeration).Id);
         }
 
         public override bool Equals(object? obj)
@@ -39,20 +35,25 @@ namespace BlazorApp1.Models.Predictions.Types
 
             if (otherValue == null) return false;
 
-            var typeMatches = GetType() == obj.GetType();
-            var valueMatches = Id.Equals(otherValue.Id);
+            var typeMatches = this.GetType() == obj.GetType();
+            var valueMatches = this.Id.Equals(otherValue.Id);
 
             return typeMatches && valueMatches;
         }
 
-        protected bool Equals(PredictionEnumeration other)
-        {
-            return Name == other.Name && Id == other.Id;
-        }
-
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, Id);
+            return HashCode.Combine(this.Name, this.Id);
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
+        protected bool Equals(PredictionEnumeration other)
+        {
+            return this.Name == other.Name && this.Id == other.Id;
         }
     }
 }

@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.SqlServer.Update.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Update;
-
-namespace BlazorApp1.Database
+﻿namespace BlazorApp1.Database
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
+    using Microsoft.EntityFrameworkCore.SqlServer.Update.Internal;
+    using Microsoft.EntityFrameworkCore.Storage;
+    using Microsoft.EntityFrameworkCore.Update;
+
     /// <summary>
-    /// SqlServerUpdateSqlGenerator with Insert_Identity.
+    ///     SqlServerUpdateSqlGenerator with Insert_Identity.
     /// </summary>
     public class SqlServerUpdateSqlGeneratorInsertIdentity : SqlServerUpdateSqlGenerator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlServerUpdateSqlGeneratorInsertIdentity"/> class.
+        ///     Initializes a new instance of the <see cref="SqlServerUpdateSqlGeneratorInsertIdentity" /> class.
         /// </summary>
         /// <param name="dependencies">The dependencies.</param>
         public SqlServerUpdateSqlGeneratorInsertIdentity(UpdateSqlGeneratorDependencies dependencies)
@@ -23,7 +22,7 @@ namespace BlazorApp1.Database
         {
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public override ResultSetMapping AppendBulkInsertOperation(
             StringBuilder commandStringBuilder,
             IReadOnlyList<ModificationCommand> modificationCommands,
@@ -34,9 +33,9 @@ namespace BlazorApp1.Database
             var schema = modificationCommands[0].Schema;
             var table = modificationCommands[0].TableName;
 
-            GenerateIdentityInsert(commandStringBuilder, table, schema, columns, on: true);
+            this.GenerateIdentityInsert(commandStringBuilder, table, schema, columns, true);
             var result = base.AppendBulkInsertOperation(commandStringBuilder, modificationCommands, commandPosition);
-            GenerateIdentityInsert(commandStringBuilder, table, schema, columns, on: false);
+            this.GenerateIdentityInsert(commandStringBuilder, table, schema, columns, false);
 
             return result;
         }
@@ -48,17 +47,17 @@ namespace BlazorApp1.Database
             IEnumerable<string> columns,
             bool on)
         {
-            var stringTypeMapping = Dependencies.TypeMappingSource.GetMapping(typeof(string));
+            var stringTypeMapping = this.Dependencies.TypeMappingSource.GetMapping(typeof(string));
 
             builder.Append("IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE").Append(" [name] IN (")
                 .Append(string.Join(", ", columns.Select(stringTypeMapping.GenerateSqlLiteral)))
                 .Append(") AND [object_id] = OBJECT_ID(").Append(
                     stringTypeMapping.GenerateSqlLiteral(
-                        Dependencies.SqlGenerationHelper.DelimitIdentifier(table, schema))).AppendLine("))");
+                        this.Dependencies.SqlGenerationHelper.DelimitIdentifier(table, schema))).AppendLine("))");
 
             builder.Append("SET IDENTITY_INSERT ")
-                .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(table, schema)).Append(on ? " ON" : " OFF")
-                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+                .Append(this.Dependencies.SqlGenerationHelper.DelimitIdentifier(table, schema))
+                .Append(on ? " ON" : " OFF").AppendLine(this.Dependencies.SqlGenerationHelper.StatementTerminator);
         }
     }
 }
